@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tinc
-PKG_VERSION:=1.0.35
+PKG_VERSION:=1.1pre17
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.tinc-vpn.org/packages
-PKG_HASH:=18c83b147cc3e2133a7ac2543eeb014d52070de01c7474287d3ccecc9b16895e
+PKG_HASH:=61b9c9f9f396768551f39216edcc41918c65909ffd9af071feb3b5f9f9ac1c27
 
 PKG_INSTALL:=1
 
@@ -22,7 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/tinc
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+liblzo +libopenssl +kmod-tun +zlib
+  DEPENDS:=+liblzo +libopenssl +kmod-tun +zlib +libncurses +libreadline
   TITLE:=VPN tunneling daemon
   URL:=http://www.tinc-vpn.org/
   MAINTAINER:=Saverio Proto <zioproto@gmail.com>
@@ -39,10 +39,13 @@ TARGET_CFLAGS += -std=gnu99
 CONFIGURE_ARGS += \
 	--with-kernel="$(LINUX_DIR)" \
 	--with-zlib="$(STAGING_DIR)/usr" \
-	--with-lzo-include="$(STAGING_DIR)/usr/include/lzo"
+	--with-lzo-include="$(STAGING_DIR)/usr/include/lzo" \
+	--with-curses \
+	--with-readline
 
 define Package/tinc/install
 	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/tinc $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/tincd $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) files/$(PKG_NAME).init $(1)/etc/init.d/$(PKG_NAME)
